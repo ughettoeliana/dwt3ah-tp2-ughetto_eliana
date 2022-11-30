@@ -1,11 +1,19 @@
 <template>
   <main :class="weatherClass">
     <CitySearchbar :on-search="onSearch"></CitySearchbar>
-    <!-- <ErrorMessage  :on-search="onSearch"></ErrorMessage> -->
-    <div id='errorText' class="errorText">
-      <p>We didn't find the city {{ searchQuery }}, try again with another one</p>
+    <!-- <div id='errorText' class="errorText" v-if="hasError">
+      <p>We didn't find the city '{{ searchQuery }}', try again with another one</p>
+    </div> -->
+    <v-alert
+      dense
+      outlined
+      type="error"
+      v-if="hasError"
+    >
+    <div id='errorText' class="errorText" >
+      <p>We didn't find the city '{{ searchQuery }}', try again with another one</p>
     </div>
-
+    </v-alert>
     <div id='home' class="weather-wrap" v-if="hasWeather">
       <div class="location-box">
         <h1 class="location">
@@ -23,7 +31,7 @@
     <hr>
     <h2 class="white-text">Recent searchs</h2>
     <section id='recents' class="cityHistory-wrap">
-        <CityCard :city-history="cityHistory"></CityCard>
+      <CityCard :city-history="cityHistory"></CityCard>
     </section>
   </main>
 </template>
@@ -31,20 +39,18 @@
 <script>
 import CitySearchbar from './components/CitySearchbar.vue'
 import CityCard from './components/CityCard.vue'
-// import ErrorMessage from './components/ErrorMessage.vue'
 
 export default {
   name: 'App',
   components: {
     CitySearchbar,
     CityCard,
-    // ErrorMessage
   },
   data: () => {
     return {
       searchQuery: '',
       cityHistory: [],
-      // hasError: false,
+      hasError: false,
       searchList: []
     }
   },
@@ -94,22 +100,30 @@ export default {
     },
 
     async onSearch(searchValue) {
-      // this.hasError = false
       const rawCity = await this.fetchWeather(searchValue);
+      if (rawCity.name == '' || rawCity.name == null) {
+        this.searchQuery += searchValue;
+        this.hasError = true;
+        this.searchQuery += ' ';
+        console.log(this.searchQuery);
+        return;
+      }
+
       // Borramos la busqueda anterior de la misma ciudad.
       this.cityHistory = this.cityHistory.filter(item => item.id !== rawCity.id);
       const newCity = this.parseWeatherResponse(rawCity);
       this.cityHistory.push(newCity);
+      this.hasError = false;
+      this.searchQuery = '';
     },
 
     async fetchWeather(searchQuery) {
       const baseUrl = 'https://api.openweathermap.org/data/2.5/weather?q=';
       const apiKey = 'ba9d29841e8cf91d17e903bbcc9dc4a1';
-      // this.hasError = false
 
       return fetch(`${baseUrl}${searchQuery}&appid=${apiKey}&units=metric`)
         .then(res => res.json())
-        .catch(() => { this.hasError()});
+        .catch(() => { });
     },
   },
 
