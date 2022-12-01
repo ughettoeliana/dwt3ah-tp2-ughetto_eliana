@@ -1,0 +1,9 @@
+Alumno: Ughetto Eliana Carolina
+Año: 2022
+Carrera: Diseño y Programación Web
+Turno: Tarde 
+Comision: A
+Modalidad de cursada: Hibrida
+Entrega: Parcial 2
+Materia: Aplicaciones para dispositivos moviles
+Profesor: Medina Sergio
