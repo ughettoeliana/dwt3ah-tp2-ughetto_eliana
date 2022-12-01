@@ -1,16 +1,12 @@
 <template>
   <main :class="weatherClass">
     <CitySearchbar :on-search="onSearch"></CitySearchbar>
-    <!-- <div id='errorText' class="errorText" v-if="hasError">
-      <p>We didn't find the city '{{ searchQuery }}', try again with another one</p>
-    </div> -->
     <v-alert
-      dense
-      outlined
       type="error"
+      class="error--text"
       v-if="hasError"
     >
-    <div id='errorText' class="errorText" >
+    <div id='errorText' >
       <p>We didn't find the city '{{ searchQuery }}', try again with another one</p>
     </div>
     </v-alert>
@@ -102,10 +98,8 @@ export default {
     async onSearch(searchValue) {
       const rawCity = await this.fetchWeather(searchValue);
       if (rawCity.name == '' || rawCity.name == null) {
-        this.searchQuery += searchValue;
+        this.searchQuery = searchValue;
         this.hasError = true;
-        this.searchQuery += ' ';
-        console.log(this.searchQuery);
         return;
       }
 
@@ -154,7 +148,7 @@ export default {
     },
 
   },
-
+  
 }
 </script>
 
